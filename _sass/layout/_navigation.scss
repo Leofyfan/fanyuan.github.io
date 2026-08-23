@@ -189,13 +189,12 @@
     }
   }
 
-  button {
+  .greedy-nav__toggle {
     position: absolute;
     height: 2.5rem;
     right: 0;
     padding: 0 0.5rem;
     border: 0;
-    outline: none;
     background-color: var(--global-base-color);
     color: #fff;
     cursor: pointer;
@@ -226,11 +225,18 @@
     }
 
     #theme-toggle {
-      a {
-        width: 25px;
-        display: flex;
-        justify-content: center;
-        cursor: pointer;
+      width: 25px;
+      display: flex;
+      justify-content: center;
+      margin: 0 0 0 1rem;
+      padding: 0.5rem 0;
+      border: 0;
+      background: transparent;
+      color: var(--global-masthead-link-color);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--global-masthead-link-color-hover);
       }
     }
 
