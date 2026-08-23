@@ -14,6 +14,7 @@ from urllib.parse import unquote, urlsplit
 
 
 BASE_PATH = "/fanyuan.github.io"
+SITE_ORIGIN = "https://leofyfan.github.io"
 SUPPRESSED_TEXT_ELEMENTS = {"script", "style", "template"}
 
 REQUIRED_ROUTES = {"/", "/publications/", "/404.html"}
@@ -192,7 +193,10 @@ def strip_base_path(url_path: str) -> str:
 def has_project_base_path(value: str) -> bool:
     """Return whether a local root-relative URL includes the project base path."""
     parsed = urlsplit(value.strip())
-    if parsed.scheme or parsed.netloc:
+    origin = urlsplit(SITE_ORIGIN)
+    if (parsed.scheme or parsed.netloc) and (
+        parsed.scheme.lower(), parsed.netloc.lower()
+    ) != (origin.scheme, origin.netloc):
         return True
     decoded_path = unquote(parsed.path)
     if not decoded_path.startswith("/"):
@@ -205,7 +209,10 @@ def local_target(
 ) -> tuple[Path, str] | None:
     """Return a local reference's target and site-root-relative display path."""
     parsed = urlsplit(value.strip())
-    if parsed.scheme or parsed.netloc:
+    origin = urlsplit(SITE_ORIGIN)
+    if (parsed.scheme or parsed.netloc) and (
+        parsed.scheme.lower(), parsed.netloc.lower()
+    ) != (origin.scheme, origin.netloc):
         return None
 
     decoded_path = unquote(parsed.path)
