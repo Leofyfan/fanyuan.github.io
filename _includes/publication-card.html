@@ -1,0 +1,47 @@
+{% assign publication = include.publication %}
+{% assign card_id = publication.slug | default: publication.title | slugify %}
+{% assign primary_link = publication.links | first %}
+<article class="publication-card" aria-labelledby="publication-title-{{ card_id }}">
+  <div class="publication-card__media">
+    {% if publication.image and primary_link %}
+      <a class="publication-card__image-link" href="{{ primary_link.url }}" target="_blank" rel="noopener noreferrer" aria-label="Open {{ publication.title }} via {{ primary_link.label }}">
+        <img class="publication-card__image" src="{{ publication.image | relative_url }}" alt="{{ publication.image_alt }}">
+      </a>
+    {% elsif publication.image %}
+      <img class="publication-card__image" src="{{ publication.image | relative_url }}" alt="{{ publication.image_alt }}">
+    {% endif %}
+  </div>
+
+  <div class="publication-card__content">
+    {% if publication.status or publication.award %}
+      <div class="publication-card__badges" aria-label="Publication recognition">
+        {% if publication.status %}
+          <span class="publication-card__badge">{{ publication.status }}</span>
+        {% endif %}
+        {% if publication.award %}
+          <span class="publication-card__badge publication-card__badge--award">{{ publication.award }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <h3 class="publication-card__title" id="publication-title-{{ card_id }}">{{ publication.title }}</h3>
+
+    <p class="publication-card__authors">
+      {% assign author_names = publication.authors | split: ", " %}
+      {% for author_name in author_names %}
+        {% if author_name == publication.highlight_author %}<strong>{{ author_name }}</strong>{% else %}{{ author_name }}{% endif %}{% unless forloop.last %}, {% endunless %}
+      {% endfor %}
+    </p>
+
+    <p class="publication-card__venue">{{ publication.venue }}</p>
+    <p class="publication-card__summary">{{ publication.summary }}</p>
+
+    {% if publication.links %}
+      <ul class="publication-card__links" aria-label="Publication links">
+        {% for link in publication.links %}
+          <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</article>
