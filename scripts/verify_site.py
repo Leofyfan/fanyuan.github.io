@@ -17,6 +17,20 @@ BASE_PATH = "/fanyuan.github.io"
 SUPPRESSED_TEXT_ELEMENTS = {"script", "style", "template"}
 
 REQUIRED_ROUTES = {"/", "/publications/", "/404.html"}
+REQUIRED_GENERATED_FILES = ("feed.xml", "sitemap.xml")
+
+FORBIDDEN_GENERATED_PATHS = (
+    "files",
+    "images/500x300.png",
+    "images/bio-photo-2.jpg",
+    "images/bio-photo.jpg",
+    "images/editing-talk.png",
+    "images/profile.png",
+    "images/themes",
+    "talkmap.ipynb",
+    "talkmap.py",
+    "talkmap_out.ipynb",
+)
 
 PAPER_TITLES = (
     "GSM8K-V: Can Vision Language Models Solve Grade School Math Word Problems "
@@ -175,6 +189,17 @@ def strip_base_path(url_path: str) -> str:
     return url_path
 
 
+def has_project_base_path(value: str) -> bool:
+    """Return whether a local root-relative URL includes the project base path."""
+    parsed = urlsplit(value.strip())
+    if parsed.scheme or parsed.netloc:
+        return True
+    decoded_path = unquote(parsed.path)
+    if not decoded_path.startswith("/"):
+        return True
+    return decoded_path == BASE_PATH or decoded_path.startswith(f"{BASE_PATH}/")
+
+
 def local_target(
     site_root: Path, document: Path, value: str
 ) -> tuple[Path, str] | None:
@@ -229,6 +254,14 @@ def verify_site(site_root: Path) -> list[str]:
     for route in sorted(route_files.keys() - REQUIRED_ROUTES):
         errors.append(f"unexpected generated HTML route: {route}")
 
+    for relative in REQUIRED_GENERATED_FILES:
+        if not (site_root / relative).is_file():
+            errors.append(f"missing required generated file: {relative}")
+
+    for relative in FORBIDDEN_GENERATED_PATHS:
+        if (site_root / relative).exists():
+            errors.append(f"obsolete template asset was generated: {relative}")
+
     parsed_pages: dict[Path, SiteHTMLParser] = {}
     source_text: dict[Path, str] = {}
     for path in html_files:
@@ -279,6 +312,20 @@ def verify_site(site_root: Path) -> list[str]:
                 all_anchor_hrefs.add(value)
 
             location = f"{document.relative_to(site_root)}:{reference.line}"
+            try:
+                uses_base_path = has_project_base_path(value)
+            except ValueError as exc:
+                errors.append(
+                    f"{location}: invalid {reference.attribute} URL "
+                    f"{value!r} ({exc})"
+                )
+                continue
+            if not uses_base_path:
+                errors.append(
+                    f"{location}: local root-relative {reference.attribute} "
+                    f"{value!r} omits project base path {BASE_PATH!r}"
+                )
+                continue
             try:
                 target_info = local_target(site_root, document, value)
             except ValueError as exc:

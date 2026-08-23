@@ -136,7 +136,7 @@ $(document).ready(function () {
     $authorToggle
       .toggleClass("open", isExpanded)
       .attr("aria-expanded", isExpanded ? "true" : "false")
-      .attr("aria-label", isExpanded ? "Follow: Hide contact links" : "Follow: Show contact links");
+      .attr("aria-label", isExpanded ? "Contact: Hide contact links" : "Contact: Show contact links");
   };
 
   $authorToggle.on("click", function () {
