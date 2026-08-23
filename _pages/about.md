@@ -6,9 +6,9 @@ author_profile: true
 
 # About Me
 
-I am Fan Yuan, an Artificial Intelligence student at Zhejiang University (2026–2029). My research interests center on intelligent agents, large language models, and reinforcement learning.
+I am a M.S. student in Artificial Intelligence at Zhejiang University (2026–2029), where I am a member of [REAL Lab](https://zju-real.github.io/), advised by Dr. Yongliang Shen. Before that, I received my B.S. from East China Normal University.
 
-I am especially interested in reasoning with multimodal language models, including visual mathematical reasoning and the design of capable learning systems.
+My research interests center on intelligent agents, large language models, and reinforcement learning.
 
 ## Research Interests
 

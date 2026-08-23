@@ -243,11 +243,11 @@ button {
 
 .author__urls {
   border-color: var(--academic-border);
-  background: var(--academic-surface-raised);
+  background: var(--academic-page-bg);
   box-shadow: var(--academic-shadow);
 
   &::after {
-    border-color: var(--academic-surface-raised) transparent;
+    border-color: var(--academic-page-bg) transparent;
   }
 
   a {
