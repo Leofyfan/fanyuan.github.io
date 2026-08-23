@@ -10,12 +10,12 @@ The primary audience is researchers, prospective collaborators, and recruiters. 
 
 ## Information architecture
 
-The public site has two primary destinations:
+The public site has exactly two primary HTML destinations:
 
 1. `/` is the main academic profile. It contains a compact biography, research interests, and a selected-publications section.
 2. `/publications/` lists the same two publications in a dedicated archive for direct linking.
 
-The header exposes only `Home` and `Publications`. Template destinations for talks, teaching, portfolio, blog, CV, and guide are removed from navigation. Placeholder publication, talk, teaching, and blog records are removed so they cannot appear in generated archives or feeds.
+The header exposes only `Home` and `Publications`. Template destinations for talks, teaching, portfolio, blog, CV, guide, terms, category/tag/year/page archives, talk maps, collection archives, and Markdown examples are deleted or unpublished so they do not remain reachable directly or appear in the sitemap. The site retains only the home page, publications page, English 404 page, sitemap, and feed files. Unused teaching, portfolio, and talks collections are disabled. The publications collection remains available as structured input for the archive but does not emit individual paper pages.
 
 ## Profile content
 
@@ -27,7 +27,7 @@ The sidebar uses the supplied `profile.jpg` as the avatar and identifies the per
 - GitHub links to `https://github.com/leofyfan`.
 - Email links to `yuanfan7777777@gmail.com`, based on the public contact associated with the GSM8K-V project.
 
-The main biography expands the abbreviations once and stays brief. It emphasizes intelligent agents, reasoning, multimodal language models, and reinforcement learning rather than adding unprovided biography details.
+The main biography expands known abbreviations once and stays brief; `OPD` remains unchanged until an expansion is supplied. It emphasizes intelligent agents, reasoning, multimodal language models, and reinforcement learning rather than adding unprovided biography details.
 
 ## Publications
 
@@ -39,7 +39,7 @@ Each publication is a responsive card with a locally stored, descriptive image, 
 - Authors: Fan Yuan, Yuchen Yan, Yifan Jiang, Haoran Zhao, Tao Feng, Jinyan Chen, Yanwei Lou, Wenqi Zhang, Yongliang Shen, Weiming Lu, Jun Xiao, Yueting Zhuang
 - Venue: `EMNLP 2026 Main Conference`
 - Status: `Accepted`
-- Links: arXiv, project repository, and dataset when available.
+- Links: arXiv at `https://arxiv.org/abs/2509.25160`, repository at `https://github.com/ZJU-REAL/GSM8K-V`, and dataset links discovered from that repository.
 - Summary: presents a purely visual, multi-image benchmark for grade-school mathematical reasoning.
 - Image: a real GSM8K-V project visual or paper figure copied into the repository, not a generic stock image.
 
@@ -49,7 +49,7 @@ Each publication is a responsive card with a locally stored, descriptive image, 
 - Authors: Qinhua Xie, Weicong Liu, Fan Yuan, Jifan Shi, Ziyu Liu, Yanbing Zhang
 - Venue: `2024 IEEE International Conference on Multimedia and Expo Workshops (ICMEW)`
 - Award: `Best Demo Paper`
-- Links: IEEE Xplore and DOI.
+- Links: IEEE Xplore and DOI at `https://doi.org/10.1109/ICMEW63481.2024.10645449`.
 - Summary: describes an LLM-based video-learning system with content mining, knowledge organization, intelligent tutoring, and playback analytics.
 - Image: a real image from the paper or its first page, stored locally.
 
@@ -57,7 +57,7 @@ Each publication is a responsive card with a locally stored, descriptive image, 
 
 The design keeps the familiar Academic Pages structure but removes template density. A warm off-white background, charcoal text, Zhejiang-inspired blue accents, generous whitespace, and restrained borders establish an academic rather than product-marketing tone. The avatar is square-cropped into a circle without modifying the source image. Publication cards use a fixed media column on desktop and stack on mobile.
 
-No decorative animations, carousels, generated illustrations, or unrelated stock photography are added. Publication imagery has meaningful alternative text. Links and badges meet keyboard and contrast requirements.
+No decorative animations, carousels, generated illustrations, or unrelated stock photography are added. Publication imagery has meaningful English alternative text. Links, focus states, and badges meet keyboard and contrast requirements.
 
 ## Implementation boundaries
 
@@ -65,13 +65,16 @@ No decorative animations, carousels, generated illustrations, or unrelated stock
 - Markdown pages own biography and publication-card markup.
 - Publication collection records own the dedicated archive data.
 - A focused Sass partial owns the homepage and publication-card styling.
-- Image files under `images/publications/` are static assets with stable paths.
+- The supplied `../profile.jpg` is copied to `images/profile.jpg` so GitHub Pages can serve it deterministically.
+- Image files under `images/publications/` are static assets with stable paths. Each records its source URL and provenance in the implementation plan and uses a project- or paper-owned visual. A link or image that cannot be sourced is omitted instead of replaced with a placeholder.
 
 No new JavaScript or runtime dependencies are introduced.
 
 ## Cleanup
 
-Visible template copy, fake publications, sample talks, teaching records, portfolio content, demo blog posts, template-only navigation, placeholder social profiles, and dummy paper/PDF links are removed. Theme infrastructure remains because it is required for GitHub Pages generation.
+Visible template copy, fake publications, sample talks, teaching records, portfolio content, demo blog posts, template-only navigation, placeholder social profiles, dummy paper/PDF links, and publishable demo routes are removed. Theme infrastructure and untranslated source-only strings that are never rendered may remain because they are required for GitHub Pages generation.
+
+All rendered public-facing content is English: biography copy, navigation, headings, badges, buttons, link labels, image alternative text, ARIA labels, 404 page, footer, SEO/Open Graph metadata, and feed/sitemap labels. The site keeps `locale: en-US`.
 
 ## Verification
 
@@ -79,8 +82,9 @@ Verification consists of:
 
 1. A content test that asserts the generated site contains Fan Yuan, Zhejiang University, both publication titles, EMNLP 2026, Best Demo Paper, the profile image, and no known template placeholders.
 2. A Jekyll production build using the repository's existing dependencies.
-3. Inspection of generated URLs and image references for missing files.
-4. A responsive browser check at desktop and mobile widths after the build.
+3. Inspection of generated HTML and XML verifies that every rendered public-facing string is English and that only the allowed HTML routes are generated.
+4. Automated checks verify that all internal links and image references resolve to generated or source files.
+5. A responsive browser check verifies keyboard focus, readable contrast, and no horizontal overflow at desktop and mobile widths.
 
 ## Assumptions
 
