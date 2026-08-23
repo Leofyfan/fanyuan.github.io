@@ -27,7 +27,10 @@ author:
   location         : "Hangzhou, China"
   employer         : "Zhejiang University"
   email            : "yuanfan7777777@gmail.com"
-  github           : "leofyfan"
+  googlescholar    : "https://scholar.google.com/citations?user=NcFV4NAAAAAJ"
+  orcid            : "https://orcid.org/0000-0002-7903-8102"
+  semantic         : "https://www.semanticscholar.org/author/Yuchen-Yan/2284984220"
+  github           : "yanyc428"
 
 # Publication Category - The following the list of publication categories and their headings
 publication_category:
