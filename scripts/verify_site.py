@@ -60,10 +60,11 @@ DEMO_STRINGS = (
 
 # CJK radicals, kana, bopomofo, Hangul, ideographs, and compatibility forms.
 CJK_PATTERN = re.compile(
-    r"[\u2e80-\u2fff\u3040-\u30ff\u3100-\u318f\u31a0-\u31ff"
-    r"\u3200-\u33ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af"
-    r"\uf900-\ufaff\uff66-\uff9d\U00020000-\U0002fa1f"
-    r"\U00030000-\U000323af]"
+    r"[\u1100-\u11ff\u2e80-\u2fff\u3040-\u30ff\u3100-\u318f"
+    r"\u31a0-\u31ff\u3200-\u33ff\u3400-\u4dbf\u4e00-\u9fff"
+    r"\ua960-\ua97f\uac00-\ud7af\ud7b0-\ud7ff\uf900-\ufaff"
+    r"\ufe30-\ufe4f\uff66-\uff9d\U0001b000-\U0001b16f"
+    r"\U00020000-\U0002fa1f\U00030000-\U000323af]"
 )
 
 
