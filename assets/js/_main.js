@@ -127,16 +127,32 @@ $(document).ready(function () {
   fitvids();
 
   // Follow menu drop down
-  $(".author__urls-wrapper button").on("click", function () {
-    $(".author__urls").fadeToggle("fast", function () { });
-    $(".author__urls-wrapper button").toggleClass("open");
+  const $authorToggle = $("#author-contact-toggle");
+  const $authorLinks = $("#author-contact-links");
+  let authorMenuWasDesktop = $(window).width() >= scssLarge;
+
+  let syncAuthorMenuState = () => {
+    const isExpanded = $authorLinks.is(":visible");
+    $authorToggle
+      .toggleClass("open", isExpanded)
+      .attr("aria-expanded", isExpanded ? "true" : "false")
+      .attr("aria-label", isExpanded ? "Follow: Hide contact links" : "Follow: Show contact links");
+  };
+
+  $authorToggle.on("click", function () {
+    $authorLinks.stop(true, true).fadeToggle("fast", syncAuthorMenuState);
   });
 
-  // Restore the follow menu if toggled on a window resize
-  jQuery(window).on('resize', function () {
-    if ($('.author__urls.social-icons').css('display') == 'none' && $(window).width() >= scssLarge) {
-      $(".author__urls").css('display', 'block')
+  syncAuthorMenuState();
+
+  // Reset presentation only when crossing the responsive breakpoint.
+  jQuery(window).on("resize", function () {
+    const isDesktop = $(window).width() >= scssLarge;
+    if (isDesktop !== authorMenuWasDesktop) {
+      $authorLinks.stop(true, true).css("display", "");
+      authorMenuWasDesktop = isDesktop;
     }
+    syncAuthorMenuState();
   });
 
   // Init smooth scroll, this needs to be slightly more than then fixed masthead height
