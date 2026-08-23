@@ -3,7 +3,7 @@
 {% assign primary_link = publication.links | first %}
 <article class="publication-card" aria-labelledby="publication-title-{{ card_id }}">
   <div class="publication-card__media">
-    {% if publication.image and primary_link %}
+    {% if publication.image and primary_link.url != blank %}
       <a class="publication-card__image-link" href="{{ primary_link.url }}" target="_blank" rel="noopener noreferrer" aria-label="Open {{ publication.title }} via {{ primary_link.label }}">
         <img class="publication-card__image" src="{{ publication.image | relative_url }}" alt="{{ publication.image_alt }}">
       </a>
@@ -39,7 +39,9 @@
     {% if publication.links %}
       <ul class="publication-card__links" aria-label="Publication links">
         {% for link in publication.links %}
-          <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></li>
+          {% if link.url != blank %}
+            <li><a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.label }}</a></li>
+          {% endif %}
         {% endfor %}
       </ul>
     {% endif %}
