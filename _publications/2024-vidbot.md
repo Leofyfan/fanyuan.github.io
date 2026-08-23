@@ -8,7 +8,7 @@ authors: "Qinhua Xie, Weicong Liu, Fan Yuan, Jifan Shi, Ziyu Liu, Yanbing Zhang"
 highlight_author: "Fan Yuan"
 summary: "Describes an LLM-based video-learning system with content mining, knowledge organization, intelligent tutoring, and playback analytics."
 image: "/images/publications/vidbot.png"
-image_alt: "First page of the VidBot video-learning system paper"
+image_alt: "IEEE Xplore record for VidBot showing the title, authors, abstract, venue, and DOI"
 links:
   - label: "IEEE Xplore"
     url: "https://ieeexplore.ieee.org/document/10645449"
