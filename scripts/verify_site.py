@@ -7,12 +7,14 @@ import argparse
 import re
 import sys
 from dataclasses import dataclass
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 
 BASE_PATH = "/fanyuan.github.io"
+SUPPRESSED_TEXT_ELEMENTS = {"script", "style", "template"}
 
 REQUIRED_ROUTES = {"/", "/publications/", "/404.html"}
 
@@ -63,13 +65,15 @@ CJK_PATTERN = re.compile(
     r"[\u1100-\u11ff\u2e80-\u2fff\u3040-\u30ff\u3100-\u318f"
     r"\u31a0-\u31ff\u3200-\u33ff\u3400-\u4dbf\u4e00-\u9fff"
     r"\ua960-\ua97f\uac00-\ud7af\ud7b0-\ud7ff\uf900-\ufaff"
-    r"\ufe30-\ufe4f\uff66-\uff9d\U0001b000-\U0001b16f"
+    r"\ufe30-\ufe4f\uff66-\uff9d\uffa1-\uffdc"
+    r"\U0001aff0-\U0001afff\U0001b000-\U0001b16f"
     r"\U00020000-\U0002fa1f\U00030000-\U000323af]"
 )
 
 
 @dataclass(frozen=True)
 class Reference:
+    tag: str
     attribute: str
     value: str
     line: int
@@ -91,19 +95,30 @@ class SiteHTMLParser(HTMLParser):
         self.references: list[Reference] = []
         self.images: list[Image] = []
         self.publication_cards = 0
+        self.suppressed_element_depth = 0
 
     def handle_starttag(
         self, tag: str, attrs: list[tuple[str, str | None]]
     ) -> None:
         self._inspect_tag(tag, attrs)
+        if tag.lower() in SUPPRESSED_TEXT_ELEMENTS:
+            self.suppressed_element_depth += 1
 
     def handle_startendtag(
         self, tag: str, attrs: list[tuple[str, str | None]]
     ) -> None:
         self._inspect_tag(tag, attrs)
 
+    def handle_endtag(self, tag: str) -> None:
+        if (
+            tag.lower() in SUPPRESSED_TEXT_ELEMENTS
+            and self.suppressed_element_depth > 0
+        ):
+            self.suppressed_element_depth -= 1
+
     def handle_data(self, data: str) -> None:
-        self.text_parts.append(data)
+        if self.suppressed_element_depth == 0:
+            self.text_parts.append(data)
 
     @property
     def visible_text(self) -> str:
@@ -122,7 +137,9 @@ class SiteHTMLParser(HTMLParser):
         for attribute in ("href", "src"):
             value = attributes.get(attribute)
             if value is not None:
-                self.references.append(Reference(attribute, value, line))
+                self.references.append(
+                    Reference(tag.lower(), attribute, value, line)
+                )
 
         if tag.lower() == "img":
             self.images.append(
@@ -246,8 +263,8 @@ def verify_site(site_root: Path) -> list[str]:
         if required not in visible_site_text:
             errors.append(f"missing required visible text: {required!r}")
 
-    all_hrefs: set[str] = set()
-    all_src_targets: set[str] = set()
+    all_anchor_hrefs: set[str] = set()
+    all_image_src_targets: set[str] = set()
     for document, parser in parsed_pages.items():
         for image in parser.images:
             if image.alt is None or not image.alt.strip():
@@ -258,17 +275,24 @@ def verify_site(site_root: Path) -> list[str]:
 
         for reference in parser.references:
             value = reference.value.strip()
-            if reference.attribute == "href":
-                all_hrefs.add(value)
+            if reference.tag == "a" and reference.attribute == "href":
+                all_anchor_hrefs.add(value)
 
-            target_info = local_target(site_root, document, value)
+            location = f"{document.relative_to(site_root)}:{reference.line}"
+            try:
+                target_info = local_target(site_root, document, value)
+            except ValueError as exc:
+                errors.append(
+                    f"{location}: invalid {reference.attribute} URL "
+                    f"{value!r} ({exc})"
+                )
+                continue
             if target_info is None:
                 continue
             target, normalized = target_info
-            if reference.attribute == "src":
-                all_src_targets.add(normalized)
+            if reference.tag == "img" and reference.attribute == "src":
+                all_image_src_targets.add(normalized)
 
-            location = f"{document.relative_to(site_root)}:{reference.line}"
             if normalized.startswith("outside generated site:"):
                 errors.append(
                     f"{location}: local {reference.attribute} {value!r} "
@@ -281,11 +305,11 @@ def verify_site(site_root: Path) -> list[str]:
                 )
 
     for image_path in REQUIRED_IMAGE_PATHS:
-        if image_path not in all_src_targets:
+        if image_path not in all_image_src_targets:
             errors.append(f"missing required image source: {image_path!r}")
 
     for link in REQUIRED_LINKS:
-        if link not in all_hrefs:
+        if link not in all_anchor_hrefs:
             errors.append(f"missing required exact link: {link!r}")
 
     generated_text = dict(source_text)
@@ -298,6 +322,8 @@ def verify_site(site_root: Path) -> list[str]:
             if demo_string in text:
                 errors.append(f"{relative}: contains demo string {demo_string!r}")
         cjk_match = CJK_PATTERN.search(text)
+        if cjk_match is None:
+            cjk_match = CJK_PATTERN.search(unescape(text))
         if cjk_match:
             errors.append(
                 f"{relative}: contains CJK character {cjk_match.group()!r}"
