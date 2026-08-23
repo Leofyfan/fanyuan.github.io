@@ -5,10 +5,26 @@
   <div class="publication-card__media">
     {% if publication.image and primary_link.url != blank %}
       <a class="publication-card__image-link" href="{{ primary_link.url }}" target="_blank" rel="noopener noreferrer" aria-label="Open {{ publication.title }} via {{ primary_link.label }}">
-        <img class="publication-card__image" src="{{ publication.image | relative_url }}" alt="{{ publication.image_alt }}">
+        <img
+          class="publication-card__image"
+          src="{{ publication.image | relative_url }}"
+          alt="{{ publication.image_alt }}"
+          {% if publication.image_width != blank %}width="{{ publication.image_width }}"{% endif %}
+          {% if publication.image_height != blank %}height="{{ publication.image_height }}"{% endif %}
+          loading="lazy"
+          decoding="async"
+        >
       </a>
     {% elsif publication.image %}
-      <img class="publication-card__image" src="{{ publication.image | relative_url }}" alt="{{ publication.image_alt }}">
+      <img
+        class="publication-card__image"
+        src="{{ publication.image | relative_url }}"
+        alt="{{ publication.image_alt }}"
+        {% if publication.image_width != blank %}width="{{ publication.image_width }}"{% endif %}
+        {% if publication.image_height != blank %}height="{{ publication.image_height }}"{% endif %}
+        loading="lazy"
+        decoding="async"
+      >
     {% endif %}
   </div>
 

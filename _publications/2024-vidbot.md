@@ -9,6 +9,8 @@ highlight_author: "Fan Yuan"
 summary: "Describes an LLM-based video-learning system with content mining, knowledge organization, intelligent tutoring, and playback analytics."
 image: "/images/publications/vidbot.png"
 image_alt: "IEEE Xplore record for VidBot showing the title, authors, abstract, venue, and DOI"
+image_width: 1730
+image_height: 700
 links:
   - label: "IEEE Xplore"
     url: "https://ieeexplore.ieee.org/document/10645449"
