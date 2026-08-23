@@ -22,8 +22,8 @@ repository               : "leofyfan/fanyuan.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   avatar           : "profile.jpg"
-  name             : "Fan Yuan"
-  bio              : "AI student at Zhejiang University (2026–2029)."
+  name             : "袁凡  Fan Yuan"
+  bio              : "M.S. at Zhejiang University"
   location         : "Hangzhou, China"
   employer         : "Zhejiang University"
   email            : "yuanfan7777777@gmail.com"
