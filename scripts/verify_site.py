@@ -62,7 +62,7 @@ DEMO_STRINGS = (
 CJK_PATTERN = re.compile(
     r"[\u2e80-\u2fff\u3040-\u30ff\u3100-\u318f\u31a0-\u31ff"
     r"\u3200-\u32ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af"
-    r"\uf900-\ufaff\U00020000-\U0002fa1f]"
+    r"\uf900-\ufaff\U00020000-\U0002fa1f\U00030000-\U000323af]"
 )
 
 
@@ -186,15 +186,12 @@ def local_target(
     return target, normalized
 
 
-def target_exists(target: Path, value: str) -> bool:
-    path = urlsplit(value.strip()).path
-    if not path:
-        return target.is_file()
-    if path.endswith("/"):
+def target_exists(target: Path, normalized_path: str) -> bool:
+    if normalized_path.endswith("/"):
         return (target / "index.html").is_file()
     if target.is_file():
         return True
-    if not Path(unquote(path)).suffix:
+    if not Path(normalized_path).suffix:
         return (target / "index.html").is_file()
     return False
 
@@ -275,7 +272,7 @@ def verify_site(site_root: Path) -> list[str]:
                     f"{location}: local {reference.attribute} {value!r} "
                     f"resolves {normalized}"
                 )
-            elif not target_exists(target, value):
+            elif not target_exists(target, normalized):
                 errors.append(
                     f"{location}: local {reference.attribute} {value!r} "
                     f"does not resolve under {site_root}"
